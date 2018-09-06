@@ -1,24 +1,26 @@
 import express from 'express';
 import next from 'next';
 
-const baseUrl = '/tools/v2';
-
 const app = next({ dev: true });
-const handleNextRequest = app.getRequestHandler();
+const handle = app.getRequestHandler();
+const { parse } = require('url')
+
+const basePath = '/a/b';
+const removeBasePath = url => url.replace(basePath, '');
 
 app.prepare().then(() => {
     const server = express();
 
-    // reroute /tools/v2/_next/* to /_next/*
-    server.get(`${baseUrl}/_next/*`, pulseBaseUrlMiddleware(baseUrl), (req, res) => {
-        const pathname = req.pulsePath;
-        handleNextRequest(req, res, { pathname });
+    server.get(`${basePath}/_next/*`, (req, res) => {
+        const parsedUrl = parse(removeBasePath(req.url) || '/', true);
+        handle(req, res, parsedUrl);
     });
 
-    // pass other requests to next.js
     server.get('*', (req, res) => {
-        const pulsePath = req.path.replace('/tools/v2', '');
-        app.render(req, res, pulsePath || '/');
+        app.setAssetPrefix(`http://localhost:3001${basePath}`);
+
+        const parsedUrl = parse(removeBasePath(req.url) || '/', true);
+        handle(req, res, parsedUrl);
     });
 
     const port = 8080;

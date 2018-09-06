@@ -4,20 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start:next": "NODE_ENV=development next start",
-    "start:proxy": "forever start ./pulse-proxy.js"
+    "build": "babel ./server.js -o server-compiled.js",
+    "start:server": "nodemon -w ./server-compiled.js ./server-compiled.js",
+    "start:proxy": "npx forever start ./proxy.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/cli": "^7.0.0",
+    "nodemon": "1.18.4",
     "express": "^4.16.3",
     "forever": "0.15.3",
     "request": "2.88.0",
     "next": "^6.1.1",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react-dom": "^16.4.2",
+    "@babel/core": "^7.0.0",
+    "url": "0.11.0",
+    "@babel/preset-env": "^7.0.0"
   }
 }
